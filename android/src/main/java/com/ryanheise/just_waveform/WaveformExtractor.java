@@ -23,6 +23,8 @@ public class WaveformExtractor {
 
     private String inPath;
     private String wavePath;
+    private Integer samplesPerPixel;
+    private Integer pixelsPerSecond;
     private OnProgressListener onProgressListener;
     private MediaExtractor extractor;
     private ProcessThread processThread;
@@ -30,9 +32,11 @@ public class WaveformExtractor {
     private MediaFormat inFormat;
     private String inMime;
 
-    public WaveformExtractor(String inPath, String wavePath) {
+    public WaveformExtractor(String inPath, String wavePath, Integer samplesPerPixel, Integer pixelsPerSecond) {
         this.inPath = inPath;
         this.wavePath = wavePath;
+        this.samplesPerPixel = samplesPerPixel;
+        this.pixelsPerSecond = pixelsPerSecond;
     }
 
     public void start(OnProgressListener onProgressListener) {
@@ -95,8 +99,12 @@ public class WaveformExtractor {
             BufferInfo bufferInfo = new BufferInfo();
 
             // For the wave
-            int pixelsPerSecond = 50; // 50 min/max pairs
-            int samplesPerPixel = sampleRate / pixelsPerSecond;
+            int samplesPerPixel;
+            if (this.samplesPerPixel != null) {
+                samplesPerPixel = this.samplesPerPixel;
+            } else {
+                samplesPerPixel = sampleRate / pixelsPerSecond;
+            }
             System.out.println("samples per pixel: " + samplesPerPixel + " = " + sampleRate + " / " + pixelsPerSecond);
             // Multiply by 2 since 2 bytes are needed for each short, and multiply by 2 again because for each sample we store a pair of (min,max)
             int scaledByteSamplesLength = 2*2*(int)(expectedSampleCount / samplesPerPixel);

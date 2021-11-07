@@ -4,16 +4,20 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 
+/// A utility for extracting a [Waveform] from an audio file suitable for visual
+/// rendering.
 class JustWaveform {
   static const MethodChannel _channel =
       MethodChannel('com.ryanheise.just_waveform');
 
-  /// Extract a waveform from [audioInFile] and write it to [waveOutFile].
+  /// Extract a [Waveform] from [audioInFile] and write it to [waveOutFile] at
+  /// the specified [zoom] level.
   // XXX: It would be better to return a stream of the actual [Waveform], with
   // progress => wave.data.length / (wave.length*2)
   static Stream<WaveformProgress> extract({
     required File audioInFile,
     required File waveOutFile,
+    WaveformZoom zoom = const WaveformZoom.pixelsPerSecond(100),
   }) {
     final progressController = StreamController<WaveformProgress>.broadcast();
     progressController.add(WaveformProgress._(0.0, null));
@@ -35,13 +39,16 @@ class JustWaveform {
           break;
       }
     });
-    _channel.invokeMethod('extract', [
-      audioInFile.path,
-      waveOutFile.path,
-    ]).catchError(progressController.addError);
+    _channel.invokeMethod('extract', {
+      'audioInPath': audioInFile.path,
+      'waveOutPath': waveOutFile.path,
+      'samplesPerPixel': zoom._samplesPerPixel,
+      'pixelsPerSecond': zoom._pixelsPerSecond,
+    }).catchError(progressController.addError);
     return progressController.stream;
   }
 
+  /// Reads [Waveform] data from an audiowaveform-formatted data file.
   static Future<Waveform> parse(File waveformFile) async {
     final bytes = Uint8List.fromList(await waveformFile.readAsBytes()).buffer;
     const headerLength = 20;
@@ -58,8 +65,12 @@ class JustWaveform {
   }
 }
 
+/// The progress of the [Waveform] extraction.
 class WaveformProgress {
+  /// The progress value between 0.0 to 1.0.
   final double progress;
+
+  /// The finished [Waveform] when extraction is complete.
   final Waveform? waveform;
 
   WaveformProgress._(this.progress, this.waveform);
@@ -117,4 +128,20 @@ class Waveform {
   /// nearest pixel value via [getPixelMin]/[getPixelMax].
   double positionToPixel(Duration position) =>
       position.inMicroseconds * sampleRate / (samplesPerPixel * 1000000);
+}
+
+/// The resolution at which a [Waveform] should be generated.
+class WaveformZoom {
+  final int? _samplesPerPixel;
+  final int? _pixelsPerSecond;
+
+  /// Specify a zoom level via samples per pixel.
+  const WaveformZoom.samplesPerPixel(int samplesPerPixel)
+      : _samplesPerPixel = samplesPerPixel,
+        _pixelsPerSecond = null;
+
+  /// Specify a zoom level via pixels per second.
+  const WaveformZoom.pixelsPerSecond(int pixelsPerSecond)
+      : _pixelsPerSecond = pixelsPerSecond,
+        _samplesPerPixel = null;
 }

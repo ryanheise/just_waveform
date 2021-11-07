@@ -131,6 +131,9 @@ class _AudioWaveformState extends State<AudioWaveformWidget> {
           waveform: widget.waveform,
           start: widget.start,
           duration: widget.duration,
+          scale: widget.scale,
+          strokeWidth: widget.strokeWidth,
+          pixelsPerStep: widget.pixelsPerStep,
         ),
       ),
     );

@@ -20,10 +20,12 @@
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     ExtAudioFileRef audioFileRef = NULL;
+    NSDictionary *request = (NSDictionary *)call.arguments;
     if ([@"extract" isEqualToString:call.method]) {
-        NSArray *args = (NSArray *)call.arguments;
-        NSString *audioInPath = (NSString *)args[0];
-        NSString *waveOutPath = (NSString *)args[1];
+        NSString *audioInPath = (NSString *)request[@"audioInPath"];
+        NSString *waveOutPath = (NSString *)request[@"waveOutPath"];
+        NSNumber *samplesPerPixelArg = (NSNumber *)request[@"samplesPerPixel"];
+        NSNumber *pixelsPerSecondArg = (NSNumber *)request[@"pixelsPerSecond"];
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             OSStatus status;
@@ -65,9 +67,13 @@
 
             NSLog(@"frames per packet: %d", fileFormat.mFramesPerPacket);
 
-            int pixelsPerSecond = 50; // 50 min/max pairs
-            int samplesPerPixel = (int)(fileFormat.mSampleRate / pixelsPerSecond);
-            NSLog(@"samples per pixel: %d = %f / %d", samplesPerPixel, fileFormat.mSampleRate, pixelsPerSecond);
+            int samplesPerPixel;
+            if (samplesPerPixelArg != (id)[NSNull null]) {
+                samplesPerPixel = [samplesPerPixelArg intValue];
+            } else {
+                samplesPerPixel = (int)(fileFormat.mSampleRate / [pixelsPerSecondArg intValue]);
+            }
+
             // Multiply by 2 since 2 bytes are needed for each short, and multiply by 2 again because for each sample we store a pair of (min,max)
             UInt32 scaledByteSamplesLength = 2*2*(UInt32)(expectedSampleCount / samplesPerPixel);
             UInt32 waveLength = (UInt32)(scaledByteSamplesLength / 2); // better name: numPixels?

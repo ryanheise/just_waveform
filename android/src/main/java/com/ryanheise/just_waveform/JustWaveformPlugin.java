@@ -26,10 +26,11 @@ public class JustWaveformPlugin implements FlutterPlugin, MethodCallHandler {
     public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
         switch (call.method) {
         case "extract":
-            List<?> args = (List<?>)call.arguments;
-            String audioInPath = (String)args.get(0);
-            String waveOutPath = (String)args.get(1);
-            WaveformExtractor waveformExtractor = new WaveformExtractor(audioInPath, waveOutPath);
+            String audioInPath = call.argument("audioInPath");
+            String waveOutPath = call.argument("waveOutPath");
+            Integer samplesPerPixel = call.argument("samplesPerPixel");
+            Integer pixelsPerSecond = call.argument("pixelsPerSecond");
+            WaveformExtractor waveformExtractor = new WaveformExtractor(audioInPath, waveOutPath, samplesPerPixel, pixelsPerSecond);
             waveformExtractor.start(new WaveformExtractor.OnProgressListener() {
                 @Override
                 public void onProgress(int progress) {
