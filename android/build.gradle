@@ -1,4 +1,4 @@
-group 'com.ryanheise.waveform_extractor'
+group 'com.ryanheise.just_waveform'
 version '1.0'
 
 buildscript {

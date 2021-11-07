@@ -1,4 +1,4 @@
-package com.ryanheise.waveform_extractor_example;
+package com.ryanheise.just_waveform_example;
 
 import io.flutter.embedding.android.FlutterActivity;
 

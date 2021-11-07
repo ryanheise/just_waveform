@@ -1,5 +1,5 @@
-name: waveform_extractor_example
-description: Demonstrates how to use the waveform_extractor plugin.
+name: just_waveform_example
+description: Demonstrates how to use the just_waveform plugin.
 
 publish_to: 'none'
 
@@ -11,7 +11,7 @@ dependencies:
     sdk: flutter
   rxdart: ^0.27.0
 
-  waveform_extractor:
+  just_waveform:
     path: ../
 
 dev_dependencies:

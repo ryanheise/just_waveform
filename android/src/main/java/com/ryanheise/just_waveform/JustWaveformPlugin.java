@@ -1,4 +1,4 @@
-package com.ryanheise.waveform_extractor;
+package com.ryanheise.just_waveform;
 
 import androidx.annotation.NonNull;
 
@@ -11,14 +11,14 @@ import android.os.Handler;
 import java.util.List;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
-/** WaveformExtractorPlugin */
-public class WaveformExtractorPlugin implements FlutterPlugin, MethodCallHandler {
+/** JustWaveformPlugin */
+public class JustWaveformPlugin implements FlutterPlugin, MethodCallHandler {
     private MethodChannel channel;
     private Handler handler = new Handler();
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-        channel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "com.ryanheise.waveform_extractor");
+        channel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "com.ryanheise.just_waveform");
         channel.setMethodCallHandler(this);
     }
 

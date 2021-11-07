@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:waveform_extractor/waveform_extractor.dart';
+import 'package:just_waveform/just_waveform.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +20,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final progressStream = BehaviorSubject<WaveformExtractorProgress>();
+  final progressStream = BehaviorSubject<WaveformProgress>();
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
           (await rootBundle.load('audio/waveform.mp3')).buffer.asUint8List());
       final waveFile =
           File(p.join((await getTemporaryDirectory()).path, 'waveform.wave'));
-      WaveformExtractor.extract(audioInFile: audioFile, waveOutFile: waveFile)
+      JustWaveform.extract(audioInFile: audioFile, waveOutFile: waveFile)
           .listen(progressStream.add, onError: progressStream.addError);
     } catch (e) {
       progressStream.addError(e);
@@ -61,7 +61,7 @@ class _MyAppState extends State<MyApp> {
             ),
             padding: const EdgeInsets.all(16.0),
             width: double.maxFinite,
-            child: StreamBuilder<WaveformExtractorProgress>(
+            child: StreamBuilder<WaveformProgress>(
               stream: progressStream,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {

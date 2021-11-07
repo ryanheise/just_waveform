@@ -1,4 +1,4 @@
-name: waveform_extractor
+name: just_waveform
 description: Extracts waveform data from an audio file suitable for visually rendering the waveform.
 version: 0.0.1
 homepage:
@@ -22,9 +22,9 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.ryanheise.waveform_extractor
-        pluginClass: WaveformExtractorPlugin
+        package: com.ryanheise.just_waveform
+        pluginClass: JustWaveformPlugin
       ios:
-        pluginClass: WaveformExtractorPlugin
+        pluginClass: JustWaveformPlugin
       macos:
-        pluginClass: WaveformExtractorPlugin
+        pluginClass: JustWaveformPlugin

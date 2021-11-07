@@ -4,23 +4,23 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 
-class WaveformExtractor {
+class JustWaveform {
   static const MethodChannel _channel =
-      MethodChannel('com.ryanheise.waveform_extractor');
+      MethodChannel('com.ryanheise.just_waveform');
 
   /// Extract a waveform from [audioInFile] and write it to [waveOutFile].
   // XXX: It would be better to return a stream of the actual [Waveform], with
   // progress => wave.data.length / (wave.length*2)
-  static Stream<WaveformExtractorProgress> extract({
+  static Stream<WaveformProgress> extract({
     required File audioInFile,
     required File waveOutFile,
   }) {
-    final progressController =
-        StreamController<WaveformExtractorProgress>.broadcast();
-    progressController.add(WaveformExtractorProgress._(0.0, null));
+    final progressController = StreamController<WaveformProgress>.broadcast();
+    progressController.add(WaveformProgress._(0.0, null));
     _channel.setMethodCallHandler((MethodCall call) async {
       switch (call.method) {
         case 'onProgress':
+          // ignore: avoid_print
           print("received onProgress: ${call.arguments}}");
           int progress = call.arguments;
           //print("_progressSubject.add($progress)");
@@ -28,8 +28,7 @@ class WaveformExtractor {
           if (progress == 100) {
             waveform = await parse(waveOutFile);
           }
-          progressController
-              .add(WaveformExtractorProgress._(progress / 100, waveform));
+          progressController.add(WaveformProgress._(progress / 100, waveform));
           if (progress == 100) {
             progressController.close();
           }
@@ -59,11 +58,11 @@ class WaveformExtractor {
   }
 }
 
-class WaveformExtractorProgress {
+class WaveformProgress {
   final double progress;
   final Waveform? waveform;
 
-  WaveformExtractorProgress._(this.progress, this.waveform);
+  WaveformProgress._(this.progress, this.waveform);
 }
 
 /// Audio waveform data in the

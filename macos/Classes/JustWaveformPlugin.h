@@ -2,5 +2,5 @@
 #import <AudioToolbox/AudioServices.h>
 #import <AudioToolbox/ExtendedAudioFile.h>
 
-@interface WaveformExtractorPlugin : NSObject<FlutterPlugin>
+@interface JustWaveformPlugin : NSObject<FlutterPlugin>
 @end

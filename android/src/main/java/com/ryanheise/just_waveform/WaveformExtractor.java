@@ -1,4 +1,4 @@
-package com.ryanheise.waveform_extractor;
+package com.ryanheise.just_waveform;
 
 import android.media.MediaCodec;
 import android.media.MediaCodec.BufferInfo;

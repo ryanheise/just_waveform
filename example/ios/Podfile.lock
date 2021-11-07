@@ -1,27 +1,27 @@
 PODS:
   - Flutter (1.0.0)
-  - path_provider (0.0.1):
+  - just_waveform (0.0.1):
     - Flutter
-  - waveform_extractor (0.0.1):
+  - path_provider (0.0.1):
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - just_waveform (from `.symlinks/plugins/just_waveform/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
-  - waveform_extractor (from `.symlinks/plugins/waveform_extractor/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  just_waveform:
+    :path: ".symlinks/plugins/just_waveform/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
-  waveform_extractor:
-    :path: ".symlinks/plugins/waveform_extractor/ios"
 
 SPEC CHECKSUMS:
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  just_waveform: e03174d1eadf4b096b01715a3e3ccbf940a05d25
   path_provider: d1e9807085df1f9cc9318206cd649dc0b76be3de
-  waveform_extractor: 38345a933bbe98e3ad3a5831f5627659e9900ccc
 
 PODFILE CHECKSUM: 8e679eca47255a8ca8067c4c67aab20e64cb974d
 

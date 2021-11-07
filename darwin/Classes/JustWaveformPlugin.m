@@ -1,18 +1,18 @@
-#import "WaveformExtractorPlugin.h"
+#import "JustWaveformPlugin.h"
 
-@implementation WaveformExtractorPlugin {
+@implementation JustWaveformPlugin {
     FlutterMethodChannel *_channel;
 }
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-    [[WaveformExtractorPlugin alloc] initWithRegistrar:registrar];
+    [[JustWaveformPlugin alloc] initWithRegistrar:registrar];
 }
 
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
     self = [super init];
     NSAssert(self, @"super init cannot be nil");
     _channel = [FlutterMethodChannel
-        methodChannelWithName:@"com.ryanheise.waveform_extractor"
+        methodChannelWithName:@"com.ryanheise.just_waveform"
               binaryMessenger:[registrar messenger]];
     [registrar addMethodCallDelegate:self channel:_channel];
     return self;

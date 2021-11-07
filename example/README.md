@@ -1,6 +1,6 @@
-# waveform_extractor_example
+# just_waveform_example
 
-Demonstrates how to use the waveform_extractor plugin.
+Demonstrates how to use the just_waveform plugin.
 
 ## Getting Started
 
