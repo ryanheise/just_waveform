@@ -1,7 +1,7 @@
 name: just_waveform
 description: Extracts waveform data from an audio file suitable for visually rendering the waveform.
 version: 0.0.1
-homepage:
+homepage: https://github.com/ryanheise/just_waveform
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
