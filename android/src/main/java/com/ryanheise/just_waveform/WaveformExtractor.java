@@ -138,7 +138,9 @@ public class WaveformExtractor {
             // XXX: Do we need to set this or is there a default?
             outFormat.setInteger(MediaFormat.KEY_SAMPLE_RATE, sampleRate);
             outFormat.setInteger(MediaFormat.KEY_CHANNEL_COUNT, channelCount);
-            outFormat.setInteger(MediaFormat.KEY_BIT_RATE, inFormat.getInteger(MediaFormat.KEY_BIT_RATE));
+            if (inFormat.containsKey(MediaFormat.KEY_BIT_RATE)) {
+                outFormat.setInteger(MediaFormat.KEY_BIT_RATE, inFormat.getInteger(MediaFormat.KEY_BIT_RATE));
+            }
             MediaFormat changedOutFormat = null;
             while (!sawInputEOS && decoderIdleCount < 100) {
                 decoderIdleCount++;
