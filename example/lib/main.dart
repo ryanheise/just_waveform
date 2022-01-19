@@ -196,7 +196,12 @@ class AudioWaveformPainter extends CustomPainter {
   }
 
   double normalise(int s, double height) {
-    final y = 32768 + (scale * s).clamp(-32768.0, 32767.0).toDouble();
-    return height - 1 - y * height / 65536;
+    if (waveform.flags == 0) {
+      final y = 32768 + (scale * s).clamp(-32768.0, 32767.0).toDouble();
+      return height - 1 - y * height / 65536;
+    } else {
+      final y = 128 + (scale * s).clamp(-128.0, 127.0).toDouble();
+      return height - 1 - y * height / 256;
+    }
   }
 }

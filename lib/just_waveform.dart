@@ -53,10 +53,13 @@ class JustWaveform {
     final bytes = Uint8List.fromList(await waveformFile.readAsBytes()).buffer;
     const headerLength = 20;
     final header = Uint32List.view(bytes, 0, headerLength);
-    final data = Int16List.view(bytes, headerLength);
+    final flags = header[1];
+    final data = flags == 0
+        ? Int16List.view(bytes, headerLength ~/ 2)
+        : Int8List.view(bytes, headerLength);
     return Waveform(
       version: header[0],
-      flags: header[1],
+      flags: flags,
       sampleRate: header[2],
       samplesPerPixel: header[3],
       length: header[4],
@@ -99,7 +102,7 @@ class Waveform {
   /// A list of min/max pairs, each representing a pixel. For each pixel, the
   /// min/max pair represents the minimum and maximum sample over the
   /// [samplesPerPixel] range.
-  final Int16List data;
+  final List<int> data;
 
   Waveform({
     required this.version,
