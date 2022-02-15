@@ -228,8 +228,6 @@ public class WaveformExtractor {
 
                 frameCount++; // not really frame count anymore
             }
-            onProgressListener.onProgress(100);
-            onProgressListener.onComplete();
             System.out.println("End. (" + presentationTime/1000000.0 + "sec) frameCount = " + frameCount + ", totalSampleSize = " + totalSampleSize);
             System.out.println("waitingToDecode:   " + waitingToDecode);
             System.out.println("waitingForDecoded: " + waitingForDecoded);
@@ -239,7 +237,7 @@ public class WaveformExtractor {
             try (FileOutputStream fout = new FileOutputStream(new File(wavePath))) {
                 FileChannel channel = fout.getChannel();
                 int waveHeaderLength = 20; // in bytes
-                int waveHeaderLengthInShorts = waveHeaderLength / 2; // in shorts 
+                int waveHeaderLengthInShorts = waveHeaderLength / 2; // in shorts
                 ByteBuffer waveHeaderBytes = ByteBuffer.allocate(waveHeaderLength);
                 waveHeaderBytes.order(ByteOrder.LITTLE_ENDIAN);
                 IntBuffer waveHeader = waveHeaderBytes.asIntBuffer();
@@ -257,6 +255,9 @@ public class WaveformExtractor {
                 channel.write(scaledByteSamples);
                 System.out.println("Total scaled samples: " + scaledSampleIdx);
             }
+
+            onProgressListener.onProgress(100);
+            onProgressListener.onComplete();
         }
         catch (Exception e) {
             e.printStackTrace();
