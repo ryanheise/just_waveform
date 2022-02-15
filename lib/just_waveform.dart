@@ -7,38 +7,43 @@ import 'package:flutter/services.dart';
 /// A utility for extracting a [Waveform] from an audio file suitable for visual
 /// rendering.
 class JustWaveform {
-  static const MethodChannel _channel =
-      MethodChannel('com.ryanheise.just_waveform');
+  static final MethodChannel _channel = MethodChannel('com.ryanheise.just_waveform');
 
   /// Extract a [Waveform] from [audioInFile] and write it to [waveOutFile] at
   /// the specified [zoom] level.
   // XXX: It would be better to return a stream of the actual [Waveform], with
   // progress => wave.data.length / (wave.length*2)
+  static Map<String, StreamController<WaveformProgress>> _map = {};
   static Stream<WaveformProgress> extract({
     required File audioInFile,
     required File waveOutFile,
     WaveformZoom zoom = const WaveformZoom.pixelsPerSecond(100),
   }) {
     final progressController = StreamController<WaveformProgress>.broadcast();
+    _map[waveOutFile.path] = progressController;
+
     progressController.add(WaveformProgress._(0.0, null));
     _channel.setMethodCallHandler((MethodCall call) async {
       switch (call.method) {
         case 'onProgress':
-          // ignore: avoid_print
-          print("received onProgress: ${call.arguments}}");
-          int progress = call.arguments;
-          //print("_progressSubject.add($progress)");
+          final args = call.arguments;
+          int progress = args['progress'];
+          String file = args['waveOutFile'];
           Waveform? waveform;
+
           if (progress == 100) {
-            waveform = await parse(waveOutFile);
+            waveform = await parse(File(file));
           }
-          progressController.add(WaveformProgress._(progress / 100, waveform));
+
+          _map[file]?.add(WaveformProgress._(progress / 100, waveform));
           if (progress == 100) {
-            progressController.close();
+            _map[file]?.close();
+            _map.remove(file);
           }
           break;
       }
     });
+    // print('Started extract $_filename');
     _channel.invokeMethod('extract', {
       'audioInPath': audioInFile.path,
       'waveOutPath': waveOutFile.path,
@@ -54,9 +59,7 @@ class JustWaveform {
     const headerLength = 20;
     final header = Uint32List.view(bytes, 0, headerLength);
     final flags = header[1];
-    final data = flags == 0
-        ? Int16List.view(bytes, headerLength ~/ 2)
-        : Int8List.view(bytes, headerLength);
+    final data = flags == 0 ? Int16List.view(bytes, headerLength ~/ 2) : Int8List.view(bytes, headerLength);
     return Waveform(
       version: header[0],
       flags: flags,
@@ -123,14 +126,12 @@ class Waveform {
   int getPixelMax(int i) => this[2 * i + 1];
 
   /// The duration of audio, inferred from the length of the waveform data.
-  Duration get duration => Duration(
-      microseconds: 1000 * 1000 * length * samplesPerPixel ~/ sampleRate);
+  Duration get duration => Duration(microseconds: 1000 * 1000 * length * samplesPerPixel ~/ sampleRate);
 
   /// Converts an audio position to a pixel position. The returned position is a
   /// [double] for accuracy, but can be converted `toInt` and used to access the
   /// nearest pixel value via [getPixelMin]/[getPixelMax].
-  double positionToPixel(Duration position) =>
-      position.inMicroseconds * sampleRate / (samplesPerPixel * 1000000);
+  double positionToPixel(Duration position) => position.inMicroseconds * sampleRate / (samplesPerPixel * 1000000);
 }
 
 /// The resolution at which a [Waveform] should be generated.
