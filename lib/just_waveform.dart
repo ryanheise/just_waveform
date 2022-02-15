@@ -22,21 +22,28 @@ class JustWaveform {
     final progressController = StreamController<WaveformProgress>.broadcast();
     progressController.add(WaveformProgress._(0.0, null));
     _channel.setMethodCallHandler((MethodCall call) async {
-      switch (call.method) {
-        case 'onProgress':
-          // ignore: avoid_print
-          print("received onProgress: ${call.arguments}}");
-          int progress = call.arguments;
-          //print("_progressSubject.add($progress)");
-          Waveform? waveform;
-          if (progress == 100) {
-            waveform = await parse(waveOutFile);
-          }
-          progressController.add(WaveformProgress._(progress / 100, waveform));
-          if (progress == 100) {
-            progressController.close();
-          }
-          break;
+      if (progressController.isClosed) return;
+      int progress = call.arguments;
+      Waveform? waveform;
+      try {
+        switch (call.method) {
+          case 'onProgress':
+            if (progress == 100) {
+              waveform = await parse(waveOutFile);
+            }
+            progressController
+                .add(WaveformProgress._(progress / 100, waveform));
+            if (progress == 100) {
+              progressController.close();
+            }
+            break;
+        }
+      } on RangeError catch (_) {
+        // This one is expected, if the waveform file is too short.
+        progressController.add(WaveformProgress._(progress / 100, waveform));
+        progressController.close();
+      } catch (e, t) {
+        progressController.addError(e, t);
       }
     });
     _channel.invokeMethod('extract', {
