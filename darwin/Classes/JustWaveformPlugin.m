@@ -156,7 +156,7 @@
                                     progress = newProgress;
                                     //NSLog(@"Progress: %d percent", progress);
                                     dispatch_async(dispatch_get_main_queue(), ^{
-                                        [_channel invokeMethod:@"onProgress" arguments:@{@"progress" : progress, @"waveOutPath" : waveOutPath}];
+                                        [_channel invokeMethod:@"onProgress" arguments:@{@"progress" : progress, @"waveOutFile" : waveOutPath}];
                                     });
                                 }
                                 //NSLog(@"pixel[%d] %d: %d\t%d", scaledSampleIdx - 2, sampleIdx, minSample, maxSample);
