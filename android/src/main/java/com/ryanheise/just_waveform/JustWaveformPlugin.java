@@ -34,7 +34,11 @@ public class JustWaveformPlugin implements FlutterPlugin, MethodCallHandler {
             waveformExtractor.start(new WaveformExtractor.OnProgressListener() {
                 @Override
                 public void onProgress(int progress) {
-                    invokeMethod("onProgress", progress);
+                     Map<String, Object> args = new HashMap();
+                    args.put("progress", progress);
+                    args.put("waveOutFile",waveOutPath);
+
+                    invokeMethod("onProgress", args);
                 }
                 @Override
                 public void onComplete() {
