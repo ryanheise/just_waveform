@@ -10,6 +10,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import android.os.Handler;
 import java.util.List;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+import java.util.HashMap;
 
 /** JustWaveformPlugin */
 public class JustWaveformPlugin implements FlutterPlugin, MethodCallHandler {
