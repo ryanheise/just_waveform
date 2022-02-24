@@ -19,52 +19,56 @@ public class JustWaveformPlugin implements FlutterPlugin, MethodCallHandler {
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-        channel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "com.ryanheise.just_waveform");
+        channel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(),
+                "com.ryanheise.just_waveform");
         channel.setMethodCallHandler(this);
     }
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
         switch (call.method) {
-        case "extract":
-            String audioInPath = call.argument("audioInPath");
-            String waveOutPath = call.argument("waveOutPath");
-            Integer samplesPerPixel = call.argument("samplesPerPixel");
-            Integer pixelsPerSecond = call.argument("pixelsPerSecond");
-            WaveformExtractor waveformExtractor = new WaveformExtractor(audioInPath, waveOutPath, samplesPerPixel, pixelsPerSecond);
-            waveformExtractor.start(new WaveformExtractor.OnProgressListener() {
-                @Override
-                public void onProgress(int progress) {
-                     Map<String, Object> args = new HashMap();
-                    args.put("progress", progress);
-                    args.put("waveOutFile",waveOutPath);
+            case "extract":
+                String audioInPath = call.argument("audioInPath");
+                String waveOutPath = call.argument("waveOutPath");
+                Integer samplesPerPixel = call.argument("samplesPerPixel");
+                Integer pixelsPerSecond = call.argument("pixelsPerSecond");
+                WaveformExtractor waveformExtractor = new WaveformExtractor(audioInPath, waveOutPath, samplesPerPixel,
+                        pixelsPerSecond);
+                waveformExtractor.start(new WaveformExtractor.OnProgressListener() {
+                    @Override
+                    public void onProgress(int progress) {
+                        HashMap<String, Object> args = new HashMap();
+                        args.put("progress", progress);
+                        args.put("waveOutFile", waveOutPath);
 
-                    invokeMethod("onProgress", args);
-                }
-                @Override
-                public void onComplete() {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            result.success(null);
-                        }
-                    });
-                }
-                @Override
-                public void onError(final String message) {
-                    invokeMethod("onError", message);
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            result.error(message, null, null);
-                        }
-                    });
-                }
-            });
-            break;
-        default:
-            result.notImplemented();
-            break;
+                        invokeMethod("onProgress", args);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                result.success(null);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(final String message) {
+                        invokeMethod("onError", message);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                result.error(message, null, null);
+                            }
+                        });
+                    }
+                });
+                break;
+            default:
+                result.notImplemented();
+                break;
         }
     }
 
