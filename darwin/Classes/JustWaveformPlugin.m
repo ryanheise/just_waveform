@@ -121,7 +121,7 @@
             UInt32 scaledSampleIdx = 0;
             int progress = 0;
 
-            while (frameCount > 0) {
+            while (frameCount > 0 && progress < 100) {
                 status = ExtAudioFileRead(audioFileRef, &frameCount, &convertedData);
                 if (status != noErr) {
                     NSLog(@"ExtAudioFileRead error: %i", status);
@@ -154,6 +154,7 @@
                                 int newProgress = (int)(100 * scaledSampleIdx / waveLength);
                                 if (newProgress != progress && newProgress <= 100) {
                                     progress = newProgress;
+                                    if (progress >= 100) break;
                                     //NSLog(@"Progress: %d percent", progress);
                                     dispatch_async(dispatch_get_main_queue(), ^{
                                         [_channel invokeMethod:@"onProgress" arguments:@{@"progress" : @(progress), @"waveOutFile" : waveOutPath}];
@@ -182,7 +183,9 @@
             NSLog(@"Total scaled samples: %d", scaledSampleIdx);
 
             status = ExtAudioFileDispose(audioFileRef);
-
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_channel invokeMethod:@"onProgress" arguments:@{@"progress" : @(100), @"waveOutFile" : waveOutPath}];
+            });
             dispatch_async(dispatch_get_main_queue(), ^{
                 result(nil);
             });
