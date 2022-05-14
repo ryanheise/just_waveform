@@ -256,7 +256,7 @@ public class WaveformExtractor {
                 channel.write(scaledByteSamples);
                 System.out.println("Total scaled samples: " + scaledSampleIdx);
             }
-            nProgressListener.onProgress(100);
+            onProgressListener.onProgress(100);
             onProgressListener.onComplete();
         }
         catch (Exception e) {
