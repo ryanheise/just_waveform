@@ -24,6 +24,7 @@
     if ([@"extract" isEqualToString:call.method]) {
         NSString *audioInPath = (NSString *)request[@"audioInPath"];
         NSString *waveOutPath = (NSString *)request[@"waveOutPath"];
+        NSString *uuid = (NSString *)request[@"uuid"];
         NSNumber *samplesPerPixelArg = (NSNumber *)request[@"samplesPerPixel"];
         NSNumber *pixelsPerSecondArg = (NSNumber *)request[@"pixelsPerSecond"];
 
@@ -157,7 +158,7 @@
                                     if (progress >= 100) break;
                                     //NSLog(@"Progress: %d percent", progress);
                                     dispatch_async(dispatch_get_main_queue(), ^{
-                                        [_channel invokeMethod:@"onProgress" arguments:@{@"progress" : @(progress), @"waveOutFile" : waveOutPath}];
+                                        [_channel invokeMethod:@"onProgress" arguments:@{@"progress" : @(progress), @"uuid" : @(uuid), @"waveOutFile" : waveOutPath}];
                                     });
                                 }
                                 //NSLog(@"pixel[%d] %d: %d\t%d", scaledSampleIdx - 2, sampleIdx, minSample, maxSample);
@@ -184,7 +185,7 @@
 
             status = ExtAudioFileDispose(audioFileRef);
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_channel invokeMethod:@"onProgress" arguments:@{@"progress" : @(100), @"waveOutFile" : waveOutPath}];
+                [_channel invokeMethod:@"onProgress" arguments:@{@"progress" : @(100), @"uuid" : @(uuid), @"waveOutFile" : waveOutPath}];
             });
             dispatch_async(dispatch_get_main_queue(), ^{
                 result(nil);

@@ -20,7 +20,8 @@ class JustWaveform {
     WaveformZoom zoom = const WaveformZoom.pixelsPerSecond(100),
   }) {
     final progressController = StreamController<WaveformProgress>.broadcast();
-    _map[waveOutFile.path] = progressController;
+    final uuid = DateTime.now().microsecondsSinceEpoch.toString();
+    _map[uuid] = progressController;
 
     progressController.add(WaveformProgress._(0.0, null));
     _channel.setMethodCallHandler((MethodCall call) async {
@@ -29,15 +30,16 @@ class JustWaveform {
           final args = call.arguments;
           int progress = args['progress'];
           String file = args['waveOutFile'];
+          String uuid = args['uuid'];
           Waveform? waveform;
 
           if (progress == 100) {
             waveform = await parse(File(file));
           }
 
-          _map[file]?.add(WaveformProgress._(progress / 100, waveform));
+          _map[uuid]?.add(WaveformProgress._(progress / 100, waveform));
           if (progress == 100) {
-            _map[file]?.close();
+            _map[uuid]?.close();
             _map.remove(file);
           }
           break;
@@ -47,6 +49,7 @@ class JustWaveform {
     _channel.invokeMethod('extract', {
       'audioInPath': audioInFile.path,
       'waveOutPath': waveOutFile.path,
+      'uuid': waveOutFile.uuid,
       'samplesPerPixel': zoom._samplesPerPixel,
       'pixelsPerSecond': zoom._pixelsPerSecond,
     }).catchError(progressController.addError);
