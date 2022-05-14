@@ -49,7 +49,7 @@ class JustWaveform {
     _channel.invokeMethod('extract', {
       'audioInPath': audioInFile.path,
       'waveOutPath': waveOutFile.path,
-      'uuid': waveOutFile.uuid,
+      'uuid': uuid,
       'samplesPerPixel': zoom._samplesPerPixel,
       'pixelsPerSecond': zoom._pixelsPerSecond,
     }).catchError(progressController.addError);
