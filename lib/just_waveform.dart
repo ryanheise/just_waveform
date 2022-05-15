@@ -24,8 +24,6 @@ class JustWaveform {
     _channel.setMethodCallHandler((MethodCall call) async {
       switch (call.method) {
         case 'onProgress':
-          // ignore: avoid_print
-          print("received onProgress: ${call.arguments}}");
           int progress = call.arguments;
           //print("_progressSubject.add($progress)");
           Waveform? waveform;

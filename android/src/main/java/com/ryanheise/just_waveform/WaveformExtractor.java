@@ -66,7 +66,7 @@ public class WaveformExtractor {
 
                 inFormat = selectAudioTrack(extractor);
                 int trackCount = extractor.getTrackCount();
-                System.out.println("extractor format = " + inFormat);
+                //System.out.println("extractor format = " + inFormat);
                 inMime = inFormat.getString(MediaFormat.KEY_MIME);
                 processAudio();
             } catch (Exception e) {
@@ -81,13 +81,13 @@ public class WaveformExtractor {
     void processAudio() {
         try {
             int channelCount = inFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
-            System.out.println("channel count = " + channelCount);
+            //System.out.println("channel count = " + channelCount);
             int sampleRate = inFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE);
-            System.out.println("sample rate = " + sampleRate);
+            //System.out.println("sample rate = " + sampleRate);
             long duration = inFormat.getLong(MediaFormat.KEY_DURATION);
             int durationMs = (int)(duration/1000);
             long expectedSampleCount = duration * sampleRate / 1000000; // If we hear 2 stereo samples at the same time, we count that as 1 sample here.
-            System.out.println("expected sample count = " + expectedSampleCount);
+            //System.out.println("expected sample count = " + expectedSampleCount);
 
             boolean sawInputEOS = false;
             int decoderIdleCount = 0;
@@ -105,14 +105,14 @@ public class WaveformExtractor {
             } else {
                 samplesPerPixel = sampleRate / pixelsPerSecond;
             }
-            System.out.println("samples per pixel: " + samplesPerPixel + " = " + sampleRate + " / " + pixelsPerSecond);
+            //System.out.println("samples per pixel: " + samplesPerPixel + " = " + sampleRate + " / " + pixelsPerSecond);
             // Multiply by 2 since 2 bytes are needed for each short, and multiply by 2 again because for each sample we store a pair of (min,max)
             int scaledByteSamplesLength = 2*2*(int)(expectedSampleCount / samplesPerPixel);
             ByteBuffer scaledByteSamples = ByteBuffer.allocate(scaledByteSamplesLength); // alternating min,max,min,max,...
             scaledByteSamples.order(ByteOrder.LITTLE_ENDIAN);
             // Number of min/max pairs
             int scaledSamplesLength = scaledByteSamplesLength / 2;
-            System.out.println("scaled samples length = " + scaledSamplesLength);
+            //System.out.println("scaled samples length = " + scaledSamplesLength);
             ShortBuffer scaledSamples = scaledByteSamples.asShortBuffer();
             int scaledSampleIdx = 0;
             short minSample = Short.MAX_VALUE;
@@ -230,12 +230,12 @@ public class WaveformExtractor {
             }
             onProgressListener.onProgress(100);
             onProgressListener.onComplete();
-            System.out.println("End. (" + presentationTime/1000000.0 + "sec) frameCount = " + frameCount + ", totalSampleSize = " + totalSampleSize);
-            System.out.println("waitingToDecode:   " + waitingToDecode);
-            System.out.println("waitingForDecoded: " + waitingForDecoded);
+            //System.out.println("End. (" + presentationTime/1000000.0 + "sec) frameCount = " + frameCount + ", totalSampleSize = " + totalSampleSize);
+            //System.out.println("waitingToDecode:   " + waitingToDecode);
+            //System.out.println("waitingForDecoded: " + waitingForDecoded);
 
             // Write the wave file
-            System.out.println("Writing the wave file...");
+            //System.out.println("Writing the wave file...");
             try (FileOutputStream fout = new FileOutputStream(new File(wavePath))) {
                 FileChannel channel = fout.getChannel();
                 int waveHeaderLength = 20; // in bytes
@@ -248,14 +248,14 @@ public class WaveformExtractor {
                 waveHeader.put(2, sampleRate);
                 waveHeader.put(3, samplesPerPixel);
                 waveHeader.put(4, (int)(((long)scaledSampleIdx / 2) & 0xffffffffL));
-                System.out.println("waveHeader[0] = 1");
-                System.out.println("waveHeader[1] = 0");
-                System.out.println("waveHeader[2] = " + sampleRate);
-                System.out.println("waveHeader[3] = " + samplesPerPixel);
-                System.out.println("waveHeader[4] = " + (int)(((long)scaledSampleIdx / 2) & 0xffffffffL));
+                //System.out.println("waveHeader[0] = 1");
+                //System.out.println("waveHeader[1] = 0");
+                //System.out.println("waveHeader[2] = " + sampleRate);
+                //System.out.println("waveHeader[3] = " + samplesPerPixel);
+                //System.out.println("waveHeader[4] = " + (int)(((long)scaledSampleIdx / 2) & 0xffffffffL));
                 channel.write(waveHeaderBytes);
                 channel.write(scaledByteSamples);
-                System.out.println("Total scaled samples: " + scaledSampleIdx);
+                //System.out.println("Total scaled samples: " + scaledSampleIdx);
             }
         }
         catch (Exception e) {

@@ -61,11 +61,11 @@
                 });
                 return;
             }
-            NSLog(@"channel count = %d", fileFormat.mChannelsPerFrame);
-            NSLog(@"Sample rate = %f", fileFormat.mSampleRate);
-            NSLog(@"expected sample count = %d", expectedSampleCount);
+            //NSLog(@"channel count = %d", fileFormat.mChannelsPerFrame);
+            //NSLog(@"Sample rate = %f", fileFormat.mSampleRate);
+            //NSLog(@"expected sample count = %d", expectedSampleCount);
 
-            NSLog(@"frames per packet: %d", fileFormat.mFramesPerPacket);
+            //NSLog(@"frames per packet: %d", fileFormat.mFramesPerPacket);
 
             int samplesPerPixel;
             if (samplesPerPixelArg != (id)[NSNull null]) {
@@ -77,7 +77,7 @@
             // Multiply by 2 since 2 bytes are needed for each short, and multiply by 2 again because for each sample we store a pair of (min,max)
             UInt32 scaledByteSamplesLength = 2*2*(UInt32)(expectedSampleCount / samplesPerPixel);
             UInt32 waveLength = (UInt32)(scaledByteSamplesLength / 2); // better name: numPixels?
-            NSLog(@"wave length = %d", waveLength);
+            //NSLog(@"wave length = %d", waveLength);
 
             int bytesPerChannel = 2;
             AudioStreamBasicDescription clientFormat;
@@ -174,12 +174,12 @@
             waveHeader[2] = (UInt32)fileFormat.mSampleRate;
             waveHeader[3] = samplesPerPixel;
             waveHeader[4] = (UInt32)(scaledSampleIdx / 2);
-            for (int i = 0; i < 5; i++) {
-                NSLog(@"waveHeader[%d] = %d", i, waveHeader[i]);
-            }
+            //for (int i = 0; i < 5; i++) {
+            //    NSLog(@"waveHeader[%d] = %d", i, waveHeader[i]);
+            //}
             NSData *waveData = [NSData dataWithBytesNoCopy:(void *)waveFileContent length:(waveHeaderLength + 2*scaledSampleIdx)];
             [waveData writeToFile:waveOutPath atomically:NO];
-            NSLog(@"Total scaled samples: %d", scaledSampleIdx);
+            //NSLog(@"Total scaled samples: %d", scaledSampleIdx);
 
             status = ExtAudioFileDispose(audioFileRef);
 

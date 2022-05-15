@@ -67,7 +67,7 @@ public class JustWaveformPlugin implements FlutterPlugin, MethodCallHandler {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                System.out.println("invokeMethod " + method + "(" + arguments + ")");
+                //System.out.println("invokeMethod " + method + "(" + arguments + ")");
                 channel.invokeMethod(method, arguments);
             }
         });
