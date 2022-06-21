@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Supress logs.
+
 ## 0.0.2
 
 * Fix Android bug where file has no bit rate metadata.
