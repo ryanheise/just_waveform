@@ -228,8 +228,6 @@ public class WaveformExtractor {
 
                 frameCount++; // not really frame count anymore
             }
-            onProgressListener.onProgress(100);
-            onProgressListener.onComplete();
             //System.out.println("End. (" + presentationTime/1000000.0 + "sec) frameCount = " + frameCount + ", totalSampleSize = " + totalSampleSize);
             //System.out.println("waitingToDecode:   " + waitingToDecode);
             //System.out.println("waitingForDecoded: " + waitingForDecoded);
@@ -257,6 +255,8 @@ public class WaveformExtractor {
                 channel.write(scaledByteSamples);
                 //System.out.println("Total scaled samples: " + scaledSampleIdx);
             }
+            onProgressListener.onProgress(100);
+            onProgressListener.onComplete();
         }
         catch (Exception e) {
             e.printStackTrace();

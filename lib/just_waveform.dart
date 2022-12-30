@@ -14,32 +14,43 @@ class JustWaveform {
   /// the specified [zoom] level.
   // XXX: It would be better to return a stream of the actual [Waveform], with
   // progress => wave.data.length / (wave.length*2)
+  static Map<String, StreamController<WaveformProgress>> _map = {};
   static Stream<WaveformProgress> extract({
     required File audioInFile,
     required File waveOutFile,
     WaveformZoom zoom = const WaveformZoom.pixelsPerSecond(100),
   }) {
     final progressController = StreamController<WaveformProgress>.broadcast();
+    final uuid = DateTime.now().microsecondsSinceEpoch.toString();
+    _map[uuid] = progressController;
+
     progressController.add(WaveformProgress._(0.0, null));
     _channel.setMethodCallHandler((MethodCall call) async {
       switch (call.method) {
         case 'onProgress':
-          int progress = call.arguments;
-          //print("_progressSubject.add($progress)");
+          final args = call.arguments;
+          int progress = args['progress'];
+          String file = args['waveOutFile'];
+          String uuid = args['uuid'];
           Waveform? waveform;
+
           if (progress == 100) {
-            waveform = await parse(waveOutFile);
+            waveform = await parse(File(file));
           }
-          progressController.add(WaveformProgress._(progress / 100, waveform));
+
+          _map[uuid]?.add(WaveformProgress._(progress / 100, waveform));
           if (progress == 100) {
-            progressController.close();
+            _map[uuid]?.close();
+            _map.remove(file);
           }
           break;
       }
     });
+    // print('Started extract $_filename');
     _channel.invokeMethod('extract', {
       'audioInPath': audioInFile.path,
       'waveOutPath': waveOutFile.path,
+      'uuid': uuid,
       'samplesPerPixel': zoom._samplesPerPixel,
       'pixelsPerSecond': zoom._pixelsPerSecond,
     }).catchError(progressController.addError);
