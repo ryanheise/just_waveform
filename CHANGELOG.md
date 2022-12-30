@@ -1,3 +1,7 @@
+## 0.0.4
+
+* Allow extracting multiple files simultaneously (@AlexSmirnov9107).
+
 ## 0.0.3
 
 * Supress logs.
