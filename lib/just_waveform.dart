@@ -7,50 +7,48 @@ import 'package:flutter/services.dart';
 /// A utility for extracting a [Waveform] from an audio file suitable for visual
 /// rendering.
 class JustWaveform {
-  static const MethodChannel _channel =
-      MethodChannel('com.ryanheise.just_waveform');
+  static final _channel = const MethodChannel('com.ryanheise.just_waveform')
+    ..setMethodCallHandler((MethodCall call) async {
+      switch (call.method) {
+        case 'onProgress':
+          final args = call.arguments;
+          int progress = args['progress'];
+          String waveOutFilePath = args['waveOutFile'];
+          Waveform? waveform;
+
+          if (progress == 100) {
+            waveform = await parse(File(waveOutFilePath));
+          }
+
+          _progressControllers[waveOutFilePath]
+              ?.add(WaveformProgress._(progress / 100, waveform));
+          if (progress == 100) {
+            _progressControllers[waveOutFilePath]?.close();
+            _progressControllers.remove(waveOutFilePath);
+          }
+          break;
+      }
+    });
+
+  static final _progressControllers =
+      <String, StreamController<WaveformProgress>>{};
 
   /// Extract a [Waveform] from [audioInFile] and write it to [waveOutFile] at
   /// the specified [zoom] level.
   // XXX: It would be better to return a stream of the actual [Waveform], with
   // progress => wave.data.length / (wave.length*2)
-  static Map<String, StreamController<WaveformProgress>> _map = {};
   static Stream<WaveformProgress> extract({
     required File audioInFile,
     required File waveOutFile,
     WaveformZoom zoom = const WaveformZoom.pixelsPerSecond(100),
   }) {
     final progressController = StreamController<WaveformProgress>.broadcast();
-    final uuid = DateTime.now().microsecondsSinceEpoch.toString();
-    _map[uuid] = progressController;
+    _progressControllers[waveOutFile.path] = progressController;
 
     progressController.add(WaveformProgress._(0.0, null));
-    _channel.setMethodCallHandler((MethodCall call) async {
-      switch (call.method) {
-        case 'onProgress':
-          final args = call.arguments;
-          int progress = args['progress'];
-          String file = args['waveOutFile'];
-          String uuid = args['uuid'];
-          Waveform? waveform;
-
-          if (progress == 100) {
-            waveform = await parse(File(file));
-          }
-
-          _map[uuid]?.add(WaveformProgress._(progress / 100, waveform));
-          if (progress == 100) {
-            _map[uuid]?.close();
-            _map.remove(file);
-          }
-          break;
-      }
-    });
-    // print('Started extract $_filename');
     _channel.invokeMethod('extract', {
       'audioInPath': audioInFile.path,
       'waveOutPath': waveOutFile.path,
-      'uuid': uuid,
       'samplesPerPixel': zoom._samplesPerPixel,
       'pixelsPerSecond': zoom._pixelsPerSecond,
     }).catchError(progressController.addError);

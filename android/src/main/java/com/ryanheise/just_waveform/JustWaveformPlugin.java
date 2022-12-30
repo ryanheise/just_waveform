@@ -29,7 +29,6 @@ public class JustWaveformPlugin implements FlutterPlugin, MethodCallHandler {
         case "extract":
             String audioInPath = call.argument("audioInPath");
             String waveOutPath = call.argument("waveOutPath");
-            String uuid = call.argument("uuid");
             Integer samplesPerPixel = call.argument("samplesPerPixel");
             Integer pixelsPerSecond = call.argument("pixelsPerSecond");
             WaveformExtractor waveformExtractor = new WaveformExtractor(audioInPath, waveOutPath, samplesPerPixel, pixelsPerSecond);
@@ -39,7 +38,6 @@ public class JustWaveformPlugin implements FlutterPlugin, MethodCallHandler {
                     HashMap<String, Object> args = new HashMap();
                     args.put("progress", progress);
                     args.put("waveOutFile", waveOutPath);
-                    args.put("uuid", uuid);
 
                     invokeMethod("onProgress", args);
                 }
