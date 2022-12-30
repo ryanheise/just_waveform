@@ -7,8 +7,31 @@ import 'package:flutter/services.dart';
 /// A utility for extracting a [Waveform] from an audio file suitable for visual
 /// rendering.
 class JustWaveform {
-  static const MethodChannel _channel =
-      MethodChannel('com.ryanheise.just_waveform');
+  static final _channel = const MethodChannel('com.ryanheise.just_waveform')
+    ..setMethodCallHandler((MethodCall call) async {
+      switch (call.method) {
+        case 'onProgress':
+          final args = call.arguments;
+          int progress = args['progress'];
+          String waveOutFilePath = args['waveOutFile'];
+          Waveform? waveform;
+
+          if (progress == 100) {
+            waveform = await parse(File(waveOutFilePath));
+          }
+
+          _progressControllers[waveOutFilePath]
+              ?.add(WaveformProgress._(progress / 100, waveform));
+          if (progress == 100) {
+            _progressControllers[waveOutFilePath]?.close();
+            _progressControllers.remove(waveOutFilePath);
+          }
+          break;
+      }
+    });
+
+  static final _progressControllers =
+      <String, StreamController<WaveformProgress>>{};
 
   /// Extract a [Waveform] from [audioInFile] and write it to [waveOutFile] at
   /// the specified [zoom] level.
@@ -20,23 +43,9 @@ class JustWaveform {
     WaveformZoom zoom = const WaveformZoom.pixelsPerSecond(100),
   }) {
     final progressController = StreamController<WaveformProgress>.broadcast();
+    _progressControllers[waveOutFile.path] = progressController;
+
     progressController.add(WaveformProgress._(0.0, null));
-    _channel.setMethodCallHandler((MethodCall call) async {
-      switch (call.method) {
-        case 'onProgress':
-          int progress = call.arguments;
-          //print("_progressSubject.add($progress)");
-          Waveform? waveform;
-          if (progress == 100) {
-            waveform = await parse(waveOutFile);
-          }
-          progressController.add(WaveformProgress._(progress / 100, waveform));
-          if (progress == 100) {
-            progressController.close();
-          }
-          break;
-      }
-    });
     _channel.invokeMethod('extract', {
       'audioInPath': audioInFile.path,
       'waveOutPath': waveOutFile.path,

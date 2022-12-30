@@ -10,6 +10,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import android.os.Handler;
 import java.util.List;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+import java.util.HashMap;
 
 /** JustWaveformPlugin */
 public class JustWaveformPlugin implements FlutterPlugin, MethodCallHandler {
@@ -34,8 +35,13 @@ public class JustWaveformPlugin implements FlutterPlugin, MethodCallHandler {
             waveformExtractor.start(new WaveformExtractor.OnProgressListener() {
                 @Override
                 public void onProgress(int progress) {
-                    invokeMethod("onProgress", progress);
+                    HashMap<String, Object> args = new HashMap();
+                    args.put("progress", progress);
+                    args.put("waveOutFile", waveOutPath);
+
+                    invokeMethod("onProgress", args);
                 }
+
                 @Override
                 public void onComplete() {
                     handler.post(new Runnable() {
@@ -45,6 +51,7 @@ public class JustWaveformPlugin implements FlutterPlugin, MethodCallHandler {
                         }
                     });
                 }
+
                 @Override
                 public void onError(final String message) {
                     invokeMethod("onError", message);

@@ -130,18 +130,6 @@ public class WaveformExtractor {
             decoder = MediaCodec.createDecoderByType(inMime);
             decoder.configure(inFormat, null, null, 0);
             decoder.start();
-            // Supported media formats:
-            // https://developer.android.com/guide/topics/media/media-formats
-            MediaFormat outFormat = new MediaFormat();
-            String outMime = "audio/mp4a-latm";
-            outFormat.setString(MediaFormat.KEY_MIME, outMime);
-            // XXX: Do we need to set this or is there a default?
-            outFormat.setInteger(MediaFormat.KEY_SAMPLE_RATE, sampleRate);
-            outFormat.setInteger(MediaFormat.KEY_CHANNEL_COUNT, channelCount);
-            if (inFormat.containsKey(MediaFormat.KEY_BIT_RATE)) {
-                outFormat.setInteger(MediaFormat.KEY_BIT_RATE, inFormat.getInteger(MediaFormat.KEY_BIT_RATE));
-            }
-            MediaFormat changedOutFormat = null;
             while (!sawInputEOS && decoderIdleCount < 100) {
                 decoderIdleCount++;
                 // Pump the decoder's input buffers.
@@ -158,7 +146,7 @@ public class WaveformExtractor {
 
                             decoder.queueInputBuffer(decoderInputBufferIndex, 0, bufferInfo.size, presentationTime, 0);
 
-                            int presentationTimeMs = (int)(presentationTime/1000);
+                            // int presentationTimeMs = (int)(presentationTime/1000);
                             int newProgress = (int)(100 * presentationTime / duration);
                             if (newProgress != progress && newProgress < 100) { // save 100 for after the loop since that signifies to the listener that we're done. Probably better to use a different signal.
                                 progress = newProgress;
@@ -228,8 +216,6 @@ public class WaveformExtractor {
 
                 frameCount++; // not really frame count anymore
             }
-            onProgressListener.onProgress(100);
-            onProgressListener.onComplete();
             //System.out.println("End. (" + presentationTime/1000000.0 + "sec) frameCount = " + frameCount + ", totalSampleSize = " + totalSampleSize);
             //System.out.println("waitingToDecode:   " + waitingToDecode);
             //System.out.println("waitingForDecoded: " + waitingForDecoded);
@@ -257,6 +243,8 @@ public class WaveformExtractor {
                 channel.write(scaledByteSamples);
                 //System.out.println("Total scaled samples: " + scaledSampleIdx);
             }
+            onProgressListener.onProgress(100);
+            onProgressListener.onComplete();
         }
         catch (Exception e) {
             e.printStackTrace();
