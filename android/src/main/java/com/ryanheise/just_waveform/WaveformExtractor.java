@@ -225,7 +225,6 @@ public class WaveformExtractor {
             try (FileOutputStream fout = new FileOutputStream(new File(wavePath))) {
                 FileChannel channel = fout.getChannel();
                 int waveHeaderLength = 20; // in bytes
-                int waveHeaderLengthInShorts = waveHeaderLength / 2; // in shorts 
                 ByteBuffer waveHeaderBytes = ByteBuffer.allocate(waveHeaderLength);
                 waveHeaderBytes.order(ByteOrder.LITTLE_ENDIAN);
                 IntBuffer waveHeader = waveHeaderBytes.asIntBuffer();
