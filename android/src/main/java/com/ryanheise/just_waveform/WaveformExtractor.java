@@ -19,7 +19,7 @@ import java.util.ArrayDeque;
 
 public class WaveformExtractor {
     private static final int TIMEOUT = 5000;
-    private static final int MAX_SAMPLE_SIZE = 256 * 1024;
+    //private static final int MAX_SAMPLE_SIZE = 256 * 1024;
 
     private String inPath;
     private String wavePath;
@@ -65,7 +65,7 @@ public class WaveformExtractor {
                 extractor.setDataSource(inPath);
 
                 inFormat = selectAudioTrack(extractor);
-                int trackCount = extractor.getTrackCount();
+                //int trackCount = extractor.getTrackCount();
                 //System.out.println("extractor format = " + inFormat);
                 inMime = inFormat.getString(MediaFormat.KEY_MIME);
                 processAudio();
@@ -85,17 +85,17 @@ public class WaveformExtractor {
             int sampleRate = inFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE);
             //System.out.println("sample rate = " + sampleRate);
             long duration = inFormat.getLong(MediaFormat.KEY_DURATION);
-            int durationMs = (int)(duration/1000);
+            //int durationMs = (int)(duration/1000);
             long expectedSampleCount = duration * sampleRate / 1000000; // If we hear 2 stereo samples at the same time, we count that as 1 sample here.
             //System.out.println("expected sample count = " + expectedSampleCount);
 
             boolean sawInputEOS = false;
             int decoderIdleCount = 0;
-            int bufferSize = MAX_SAMPLE_SIZE;
+            //int bufferSize = MAX_SAMPLE_SIZE;
             int frameCount = 0;
-            int offset = 100;
+            //int offset = 100;
 
-            ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+            //ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
             BufferInfo bufferInfo = new BufferInfo();
 
             // For the wave
@@ -126,7 +126,7 @@ public class WaveformExtractor {
             int waitingToDecode = 0;
             int waitingForDecoded = 0;
             long presentationTime = 0L;
-            long stopwatchStart = System.currentTimeMillis();
+            //long stopwatchStart = System.currentTimeMillis();
             decoder = MediaCodec.createDecoderByType(inMime);
             decoder.configure(inFormat, null, null, 0);
             decoder.start();
@@ -225,7 +225,6 @@ public class WaveformExtractor {
             try (FileOutputStream fout = new FileOutputStream(new File(wavePath))) {
                 FileChannel channel = fout.getChannel();
                 int waveHeaderLength = 20; // in bytes
-                int waveHeaderLengthInShorts = waveHeaderLength / 2; // in shorts 
                 ByteBuffer waveHeaderBytes = ByteBuffer.allocate(waveHeaderLength);
                 waveHeaderBytes.order(ByteOrder.LITTLE_ENDIAN);
                 IntBuffer waveHeader = waveHeaderBytes.asIntBuffer();

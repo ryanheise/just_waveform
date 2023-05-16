@@ -12,19 +12,32 @@ class JustWaveform {
       switch (call.method) {
         case 'onProgress':
           final args = call.arguments;
-          int progress = args['progress'];
-          String waveOutFilePath = args['waveOutFile'];
+          int progress = args['progress'] as int;
+          String waveOutFilePath = args['waveOutFile'] as String;
+          final progressController = _progressControllers[waveOutFilePath];
+          if (progressController == null) break;
+          if (progressController.isClosed) break;
+
           Waveform? waveform;
 
-          if (progress == 100) {
-            waveform = await parse(File(waveOutFilePath));
-          }
+          try {
+            if (progress == 100) {
+              waveform = await parse(File(waveOutFilePath));
+            }
 
-          _progressControllers[waveOutFilePath]
-              ?.add(WaveformProgress._(progress / 100, waveform));
-          if (progress == 100) {
-            _progressControllers[waveOutFilePath]?.close();
-            _progressControllers.remove(waveOutFilePath);
+            progressController
+                .add(WaveformProgress._(progress / 100, waveform));
+            if (progress == 100) {
+              progressController.close();
+              _progressControllers.remove(waveOutFilePath);
+            }
+          } on RangeError {
+            // If the waveform file is too short.
+            progressController
+                .add(WaveformProgress._(progress / 100, waveform));
+            progressController.close();
+          } catch (e, stackTrace) {
+            progressController.addError(e, stackTrace);
           }
           break;
       }
