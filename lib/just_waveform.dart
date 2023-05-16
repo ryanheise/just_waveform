@@ -12,8 +12,8 @@ class JustWaveform {
       switch (call.method) {
         case 'onProgress':
           final args = call.arguments;
-          int progress = args['progress'];
-          String waveOutFilePath = args['waveOutFile'];
+          int progress = args['progress'] as int;
+          String waveOutFilePath = args['waveOutFile'] as String;
           final progressController = _progressControllers[waveOutFilePath];
           if (progressController == null) break;
           if (progressController.isClosed) break;

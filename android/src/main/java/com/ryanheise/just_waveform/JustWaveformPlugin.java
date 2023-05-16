@@ -3,23 +3,25 @@ package com.ryanheise.just_waveform;
 import androidx.annotation.NonNull;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import android.os.Handler;
+import android.os.Looper;
 import java.util.List;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 import java.util.HashMap;
 
 /** JustWaveformPlugin */
 public class JustWaveformPlugin implements FlutterPlugin, MethodCallHandler {
     private MethodChannel channel;
-    private Handler handler = new Handler();
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
-    public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-        channel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "com.ryanheise.just_waveform");
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+        BinaryMessenger messenger = binding.getBinaryMessenger();
+        channel = new MethodChannel(messenger, "com.ryanheise.just_waveform");
         channel.setMethodCallHandler(this);
     }
 
@@ -35,7 +37,7 @@ public class JustWaveformPlugin implements FlutterPlugin, MethodCallHandler {
             waveformExtractor.start(new WaveformExtractor.OnProgressListener() {
                 @Override
                 public void onProgress(int progress) {
-                    HashMap<String, Object> args = new HashMap();
+                    HashMap<String, Object> args = new HashMap<>();
                     args.put("progress", progress);
                     args.put("waveOutFile", waveOutPath);
 

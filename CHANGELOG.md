@@ -1,3 +1,9 @@
+## 0.0.5
+
+* Fix timing of progress completion events (@volskaya).
+* Update minimum flutter version to 3.0.
+* Update AGP to 7.3.0.
+
 ## 0.0.4
 
 * Allow extracting multiple files simultaneously (@AlexSmirnov9107).

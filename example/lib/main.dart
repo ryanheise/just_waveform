@@ -68,7 +68,7 @@ class _MyAppState extends State<MyApp> {
                   return Center(
                     child: Text(
                       'Error: ${snapshot.error}',
-                      style: Theme.of(context).textTheme.headline6,
+                      style: Theme.of(context).textTheme.titleLarge,
                       textAlign: TextAlign.center,
                     ),
                   );
@@ -79,7 +79,7 @@ class _MyAppState extends State<MyApp> {
                   return Center(
                     child: Text(
                       '${(100 * progress).toInt()}%',
-                      style: Theme.of(context).textTheme.headline6,
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   );
                 }
