@@ -1,28 +1,16 @@
 PODS:
   - Flutter (1.0.0)
-  - just_waveform (0.0.1):
-    - Flutter
-  - path_provider_ios (0.0.1):
-    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - just_waveform (from `.symlinks/plugins/just_waveform/ios`)
-  - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
-  just_waveform:
-    :path: ".symlinks/plugins/just_waveform/ios"
-  path_provider_ios:
-    :path: ".symlinks/plugins/path_provider_ios/ios"
 
 SPEC CHECKSUMS:
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  just_waveform: e03174d1eadf4b096b01715a3e3ccbf940a05d25
-  path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
 
-PODFILE CHECKSUM: 663715e941f9adb426e33bf9376914006f9ea95b
+PODFILE CHECKSUM: 1a782344d33c12ced0182eeab11e8668d253eb48
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.15.2

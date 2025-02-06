@@ -1,4 +1,4 @@
-#import "JustWaveformPlugin.h"
+#import "./include/just_waveform/JustWaveformPlugin.h"
 
 @implementation JustWaveformPlugin {
     FlutterMethodChannel *_channel;

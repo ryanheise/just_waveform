@@ -1,14 +1,14 @@
 name: just_waveform
 description: Extracts waveform data from an audio file suitable for visually rendering the waveform.
-version: 0.0.5
+version: 0.0.6
 homepage: https://github.com/ryanheise/just_waveform
 topics:
   - audio
   - waveform
 
 environment:
-  sdk: ">=2.14.0 <4.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
 
 dependencies:
   flutter:
@@ -29,5 +29,7 @@ flutter:
         pluginClass: JustWaveformPlugin
       ios:
         pluginClass: JustWaveformPlugin
+        sharedDarwinSource: true
       macos:
         pluginClass: JustWaveformPlugin
+        sharedDarwinSource: true
