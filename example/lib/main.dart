@@ -118,7 +118,7 @@ class AudioWaveformWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _AudioWaveformState createState() => _AudioWaveformState();
+  State<AudioWaveformWidget> createState() => _AudioWaveformState();
 }
 
 class _AudioWaveformState extends State<AudioWaveformWidget> {

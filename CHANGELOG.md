@@ -1,3 +1,7 @@
+## 0.0.6
+
+* Add support for SwiftPM.
+
 ## 0.0.5
 
 * Fix timing of progress completion events (@volskaya).
