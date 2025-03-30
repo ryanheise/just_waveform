@@ -1,3 +1,7 @@
+## 0.0.7
+
+* Bump min flutter version to 3.27.0, AGP to 8.5.2.
+
 ## 0.0.6
 
 * Add support for SwiftPM.
